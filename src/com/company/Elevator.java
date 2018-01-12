@@ -43,6 +43,10 @@ public class Elevator {
         return this.state == WAITING;
     }
 
+    public boolean isMoving() {
+        return this.state == MOVING || this.state == MOVING_FULL;
+    }
+
     public boolean isDestinationUp() {
         return this.direction == UP;
     }
@@ -77,7 +81,7 @@ public class Elevator {
 
     private void moveToDestination() {
         String msg = String.format(
-                "   Elevator number %d was called to %d.", this.number, this.destinationFloor);
+                "   Elevator number %d ordered to %d.", this.number, this.destinationFloor);
         System.out.println(msg);
         moveElevator();
     }

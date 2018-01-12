@@ -3,7 +3,6 @@ package com.company;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.IntStream;
 
 import static java.lang.Math.abs;
@@ -12,11 +11,17 @@ import static java.util.stream.Collectors.toList;
 public class ElevatorSystem {
     private List<Elevator> elevators = new ArrayList<>();
     private List<Floor> floors = new ArrayList<>();
+    private String MESSAGE = "Welcome";
 
     public void installSystem(int elevatorCount, int floorCount, int timeStep) {
         createNElevators(elevatorCount, timeStep);
         createNFloors(floorCount);
-        System.out.println("Building has " + elevatorCount + " elevators and " + floorCount + " floors.");
+        MESSAGE = "Building has " + elevatorCount + " elevators and " + floorCount + " floors.";
+        System.out.println(MESSAGE);
+    }
+
+    public String getMESSAGE() {
+        return MESSAGE;
     }
 
     private void createNElevators(int elevatorCount, int timeStep) {
@@ -40,7 +45,7 @@ public class ElevatorSystem {
         });
     }
 
-    private int getNumberOfFloors() {
+    public int getNumberOfFloors() {
         return this.floors.size();
     }
 
@@ -48,12 +53,12 @@ public class ElevatorSystem {
         return this.floors.get(number - 1);
     }
 
-    public void pressUp(int yourFloor) {
+    public void pressUp(int yourFloor, Elevator elev) {
         Floor currentFloor = getFloor(yourFloor);
-        Elevator elev = getFreeElevator(currentFloor.getNumber());
 
         if (elev == null) {
-            System.out.println("No free elevators at the moment!");
+            MESSAGE = "No free elevators at the moment!";
+            System.out.println(MESSAGE);
         } else {
             if (yourFloor != getNumberOfFloors()) {
                 currentFloor.pressUpButton();
@@ -64,12 +69,12 @@ public class ElevatorSystem {
         }
     }
 
-    public void pressDown(int yourFloor) {
+    public void pressDown(int yourFloor, Elevator elev) {
         Floor currentFloor = getFloor(yourFloor);
-        Elevator elev = getFreeElevator(currentFloor.getNumber());
 
         if (elev == null) {
-            System.out.println("No free elevators at the moment!");
+            MESSAGE = "No free elevators at the moment!";
+            System.out.println(MESSAGE);
         } else {
             if (yourFloor != 1) {
                 currentFloor.pressDownButton();
@@ -80,38 +85,31 @@ public class ElevatorSystem {
         }
     }
 
-    public void enterElevator(int currentFloor) {
-        Elevator elev = getWaitingElevator(currentFloor);
-        if (elev != null) {
-            selectFloor(elev, currentFloor);
-        } else {
-            System.out.println("Did you call an elevator?");
-        }
-    }
 
-    private void selectFloor(Elevator elev, int currentFloor) {
-        Scanner keyboard = new Scanner(System.in);
-        System.out.println("Select floor?");
-        int destination = keyboard.nextInt();
+    public boolean goToFloor(int elevNr, int destination, int currentFloor) {
+        Elevator elev = getWaitingElevator(currentFloor, elevNr);
+        if (elev == null || !isFloorInBuilding(destination) || !isFloorInBuilding(currentFloor)) {
+            MESSAGE = elev == null ? "Elevator " + elevNr + " has not been called on floor " + currentFloor : MESSAGE;
+            return false;
+        }
 
         boolean up = elev.isDestinationUp();
-        String message = up ? "Elevator is going up!" : "Elevator is going down!";
 
-        if (isFloorInBuilding(destination)) {
-            if (up && currentFloor <= destination) {
-                elev.setDestination(destination);
-            } else if (!up && currentFloor >= destination) {
-                elev.setDestination(destination);
-            } else {
-                System.out.println(message);
-                selectFloor(elev, currentFloor);
-            }
-        } else {
-            selectFloor(elev, currentFloor);
+        if (up && currentFloor <= destination) {
+            elev.setDestination(destination);
+            MESSAGE = String.format("Elevator %d is moving to floor %d", elevNr, destination);
+            return true;
+        } else if (!up && currentFloor >= destination) {
+            elev.setDestination(destination);
+            MESSAGE = String.format("Elevator %d is moving to floor %d", elevNr, destination);
+            return true;
         }
+        MESSAGE = up ? "Elevator " + elevNr + " is going up!" : "Elevator " + elevNr + " is going down!";
+        System.out.println(MESSAGE);
+        return false;
     }
 
-    private Elevator getFreeElevator(int floor) {
+    public Elevator getFreeElevator(int floor) {
         Comparator<Elevator> byDistance =
                 Comparator.comparingInt(e -> abs(e.getCurrentFloor() - floor));
         return elevators.stream()
@@ -120,15 +118,23 @@ public class ElevatorSystem {
                 .orElse(null);
     }
 
-    private Elevator getWaitingElevator(int floor) {
+    private Elevator getWaitingElevator(int floor, int elevNr) {
         return elevators.stream()
                 .filter(Elevator::isWaiting)
-                .filter(elevator -> elevator.getCurrentFloor() - floor == 0)
+                .filter(e -> e.getCurrentFloor() - floor == 0)
+                .filter(e -> e.getNumber() == elevNr)
                 .findFirst()
                 .orElse(null);
     }
 
-    boolean isFloorInBuilding(int floor) {
+    public Elevator getElevator(int elevID) {
+        return elevators.stream()
+                .filter(elevator -> elevator.getNumber() == elevID)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private boolean isFloorInBuilding(int floor) {
         if (1 <= floor && floor <= getNumberOfFloors()) {
             return true;
         } else {
