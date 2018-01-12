@@ -1,5 +1,6 @@
 # NetGroup elevator problem
 
+A simple elevator simulator.
 Commands when using the program:
 
 To choose floor XX:

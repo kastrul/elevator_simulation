@@ -17,7 +17,8 @@ public class ElevatorConsole {
         while (inBuilding) {
             String command = keyboard.nextLine().toLowerCase();
 
-            currentFloor = command.startsWith("f") && elevSys.isFloorInBuilding(Integer.parseInt(command.substring(1)))
+            currentFloor = command.startsWith("f") && command.length() > 1
+                    && elevSys.isFloorInBuilding(Integer.parseInt(command.substring(1)))
                     ? Integer.parseInt(command.substring(1)) : currentFloor;
             command = command.startsWith("f") ? "f" : command;
 
