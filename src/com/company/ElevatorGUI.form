@@ -41,6 +41,7 @@
             </constraints>
             <properties>
               <actionCommand value="1"/>
+              <selected value="true"/>
               <text value="Elevator 1"/>
               <verticalAlignment value="0"/>
             </properties>
