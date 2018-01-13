@@ -115,7 +115,8 @@ public class ElevatorSystem {
         if (1 <= floor && floor <= getNumberOfFloors()) {
             return true;
         } else {
-            System.out.println("No such floor!");
+            MESSAGE = "No such floor!";
+            System.out.println(MESSAGE);
             return false;
         }
     }
