@@ -28,7 +28,7 @@ public class ElevatorGUI {
 
     private ElevatorSystem elevSys;
 
-    public ElevatorGUI(ElevatorSystem elevSys) {
+    ElevatorGUI(ElevatorSystem elevSys) {
         this.elevSys = elevSys;
 
     }

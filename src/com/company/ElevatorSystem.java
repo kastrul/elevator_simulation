@@ -30,7 +30,6 @@ public class ElevatorSystem {
                 .collect(toList());
     }
 
-
     public int getNumberOfFloors() {
         return this.floors;
     }
