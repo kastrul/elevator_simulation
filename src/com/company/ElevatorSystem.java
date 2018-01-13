@@ -103,9 +103,9 @@ public class ElevatorSystem {
                 .orElse(null);
     }
 
-    public Elevator getElevator(int elevID) {
+    public Elevator getElevator(int elevNr) {
         return elevators.stream()
-                .filter(elevator -> elevator.getNumber() == elevID)
+                .filter(elevator -> elevator.getNumber() == elevNr)
                 .findFirst()
                 .orElse(null);
     }
